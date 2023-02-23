@@ -34,6 +34,10 @@ namespace Mango.Web.Services
                 if(apiRequest.Data != null)
                     message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data),
                         System.Text.Encoding.UTF8,"application/json");
+                if(!string.IsNullOrEmpty(apiRequest.AccessToken))
+                {
+                    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiRequest.AccessToken);
+                }
                 HttpResponseMessage apiResponse = null;
                 switch (apiRequest.ApiType)
                 {

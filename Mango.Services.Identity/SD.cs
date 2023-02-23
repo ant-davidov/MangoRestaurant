@@ -17,7 +17,7 @@ namespace Mango.Services.Identity
                 };
         public static IEnumerable<ApiScope> ApiScopes => new List<ApiScope>
         {
-            new ApiScope("Mango","Mango Server"),
+            new ApiScope("mango","mango server"),
             new ApiScope("read","Read data"),
             new ApiScope("write","Write data"),
             new ApiScope("delete","Delete data"),
@@ -36,8 +36,8 @@ namespace Mango.Services.Identity
                 ClientId = "mango",
                 ClientSecrets = {new Secret("secret".Sha256())},
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = {"http://localhost:19429/signin-oidc" },
-                PostLogoutRedirectUris = {"http://localhost:19429/signout-callback-oidc" },
+                RedirectUris={ "https://localhost:44360/signin-oidc", "https://localhost:7085/signin-oidc" },
+                PostLogoutRedirectUris={"https://localhost:7085/" },
                 AllowedScopes = new List<string>
                 {
                     IdentityServerConstants.StandardScopes.OpenId, 
