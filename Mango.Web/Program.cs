@@ -26,6 +26,7 @@ builder.Services.AddAuthentication(options=>
       options.SaveTokens = true;
   });
 SD.ProductAPIBase=builder.Configuration["ServiceUrls:ProductAPI"];
+SD.ProductAPIBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
 builder.Services.AddScoped<IProductService, ProductService>();
 var app = builder.Build();
 
