@@ -52,5 +52,27 @@ namespace Mango.Web.Services
                 AccessToken = token
             });
         }
+
+       public async Task<T> ApplyCouponAsync<T>(CartDTO cartDTO, string token)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = cartDTO,
+                Url = SD.ShoppingCartBase + "/api/cart/ApplyCoupon",
+                AccessToken = token
+            });
+        }
+
+        public async Task<T> RemoveCouponAsync<T>(string userId, string token)
+        {
+            return await SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = userId,
+                Url = SD.ShoppingCartBase + "/api/cart/RemoveCoupon",
+                AccessToken = token
+            });
+        }
     }
 }
