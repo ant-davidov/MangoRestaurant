@@ -25,9 +25,6 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                     b.Property<int>("CartHeaderId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("CartHeadrtId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("Count")
                         .HasColumnType("INTEGER");
 
@@ -50,11 +47,9 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CouponCode")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("CartHeaderId");
@@ -68,15 +63,12 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CategoryName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")

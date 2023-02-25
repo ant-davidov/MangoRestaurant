@@ -18,6 +18,7 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
         [HttpGet("GetCart/{userId}")]
         public async Task<object> GetCart(string userId)
         {
+            
             try
             {
                 CartDTO cartDtO = await _cartRepository.GetCartByUserIdAsync(userId);
@@ -34,6 +35,7 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
         [HttpPost("AddCart")]
         public async Task<object> AddCart([FromBody] CartDTO cartDTO)
         {
+           
             try
             {
                 CartDTO cartDtO = await _cartRepository.CreateUpdateCartAsync(cartDTO);

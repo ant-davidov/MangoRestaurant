@@ -4,7 +4,7 @@
 
 namespace Mango.Services.ShoppingCartAPI.Migrations
 {
-    public partial class first : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +14,8 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                 {
                     CartHeaderId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    UserId = table.Column<string>(type: "TEXT", nullable: false),
-                    CouponCode = table.Column<string>(type: "TEXT", nullable: false)
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
+                    CouponCode = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,9 +29,9 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                     ProductId = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Price = table.Column<double>(type: "REAL", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    CategoryName = table.Column<string>(type: "TEXT", nullable: false),
-                    ImageUrl = table.Column<string>(type: "TEXT", nullable: false)
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    CategoryName = table.Column<string>(type: "TEXT", nullable: true),
+                    ImageUrl = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,6 @@ namespace Mango.Services.ShoppingCartAPI.Migrations
                 {
                     CartDetailsId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    CartHeadrtId = table.Column<int>(type: "INTEGER", nullable: false),
                     CartHeaderId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductId = table.Column<int>(type: "INTEGER", nullable: false),
                     Count = table.Column<int>(type: "INTEGER", nullable: false)

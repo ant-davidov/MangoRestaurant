@@ -1,12 +1,15 @@
 using Mango.Web;
 using Mango.Web.Services;
 using Mango.Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IProductService, ProductService>();
+builder.Services.AddHttpClient<ICartService, CartService>();
 builder.Services.AddAuthentication(options=>
 {
     options.DefaultScheme = "Cookies";
@@ -20,14 +23,17 @@ builder.Services.AddAuthentication(options=>
       options.ClientId = "mango";
       options.ClientSecret = "secret";
       options.ResponseType = "code";
+      options.ClaimActions.MapJsonKey("role", "role", "role");
+      options.ClaimActions.MapJsonKey("sub", "sub", "sub");
       options.TokenValidationParameters.NameClaimType = "name";
       options.TokenValidationParameters.RoleClaimType = "role";
       options.Scope.Add("mango");
       options.SaveTokens = true;
   });
 SD.ProductAPIBase=builder.Configuration["ServiceUrls:ProductAPI"];
-SD.ProductAPIBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
+SD.ShoppingCartBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
