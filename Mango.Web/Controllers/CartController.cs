@@ -10,16 +10,42 @@ namespace Mango.Web.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
+        private readonly ICouponService _couponService;
 
-        public CartController(IProductService productService, ICartService cartService)
+        public CartController(IProductService productService, ICartService cartService, ICouponService couponService)
         {
             _productService = productService;
             _cartService = cartService;
+            _couponService = couponService;
         }
         public async Task<IActionResult> CartIndex()
         {
             return View( await LoadCartDTOBasedOnLoggedInuser());
         }
+        public async Task<IActionResult> Checkout()
+        {
+            return View(await LoadCartDTOBasedOnLoggedInuser());
+        }
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CartDTO cartDTO)
+        {
+            try
+            {
+                var accessToken = await HttpContext.GetTokenAsync("acces_token");
+                var response = await _cartService.CheckoutAsync<ResponseDTO>(cartDTO.CartHeader, accessToken);
+                return RedirectToAction(nameof(Confirmation));
+            }
+            catch
+            {
+                return View(cartDTO);
+            }
+        }
+
+        public async Task<IActionResult> Confirmation()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Remove(int id)
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
@@ -57,10 +83,20 @@ namespace Mango.Web.Controllers
             var cartDTO = JsonConvert.DeserializeObject<CartDTO>(Convert.ToString(response.Result));
             if(cartDTO.CartHeader != null)
             {
-                foreach(var item in cartDTO.CartDetails)
+                if (cartDTO.CartHeader != null && !String.IsNullOrEmpty(cartDTO.CartHeader.CouponCode))
+                {
+                    var coupon = await _couponService.GetCoupon<ResponseDTO>(cartDTO.CartHeader.CouponCode, accessToken);
+                    if (coupon != null && coupon.IsSuccess)
+                    {
+                        var couponObj = JsonConvert.DeserializeObject<CouponDTO>(Convert.ToString(coupon.Result));
+                        cartDTO.CartHeader.DiscountTotal = couponObj.DiscountAmount;
+                    }
+                }
+                foreach (var item in cartDTO.CartDetails)
                 {
                     cartDTO.CartHeader.OrderTotl += (item.Product.Price * item.Count);
                 }
+               cartDTO.CartHeader.OrderTotl -= cartDTO.CartHeader.DiscountTotal;
             }
             return cartDTO;
         }

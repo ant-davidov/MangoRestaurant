@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<IProductService, ProductService>();
 builder.Services.AddHttpClient<ICartService, CartService>();
+builder.Services.AddHttpClient<ICouponService, CouponService>();
 builder.Services.AddAuthentication(options=>
 {
     options.DefaultScheme = "Cookies";
@@ -32,8 +33,10 @@ builder.Services.AddAuthentication(options=>
   });
 SD.ProductAPIBase=builder.Configuration["ServiceUrls:ProductAPI"];
 SD.ShoppingCartBase = builder.Configuration["ServiceUrls:ShoppingCartAPI"];
+SD.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"];
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICouponService, CouponService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
