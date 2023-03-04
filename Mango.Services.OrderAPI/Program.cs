@@ -1,3 +1,4 @@
+using Mango.MessageBus;
 using Mango.Services.OrderAPI.DbContexts;
 using Mango.Services.OrderAPI.Messaging;
 using Mango.Services.OrderAPI.Repository;
@@ -20,7 +21,8 @@ var optionBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 optionBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 builder.Services.AddSingleton(new OrderRepository(optionBuilder.Options));
 builder.Services.AddHostedService<ConsumeRabbitMQHostedService>();
-
+builder.Services.AddHostedService<ConsumeRabbitMGetResultPaymentStatus>();
+builder.Services.AddSingleton<IMessageBus, MessageBus>();
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
 {

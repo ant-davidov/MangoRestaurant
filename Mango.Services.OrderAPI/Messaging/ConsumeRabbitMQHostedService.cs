@@ -1,4 +1,6 @@
-﻿using Mango.Services.OrderAPI.Messeges;
+﻿using Mango.MessageBus;
+using Mango.Services.OrderAPI.Messages;
+using Mango.Services.OrderAPI.Messeges;
 using Mango.Services.OrderAPI.Models;
 using Mango.Services.OrderAPI.Repository;
 using Newtonsoft.Json;
@@ -16,10 +18,12 @@ namespace Mango.Services.OrderAPI.Messaging
         private IConnection _connection;
         private IModel _channel;
         private readonly OrderRepository _orderRepository;
-        public ConsumeRabbitMQHostedService(OrderRepository orderRepository)
+        private readonly IMessageBus _messageBus;
+        public ConsumeRabbitMQHostedService(OrderRepository orderRepository, IMessageBus messageBus)
         {
             InitRabbitMQ();
             _orderRepository = orderRepository;
+            _messageBus = messageBus;  
         }
         private void InitRabbitMQ()
         {
@@ -88,7 +92,29 @@ namespace Mango.Services.OrderAPI.Messaging
                 }
 
                 await _orderRepository.AddOrder(orderHeader);
+
+                PaymentRequestMessage paymentRequestMessage = new()
+                {
+                    Name = orderHeader.FisrtName + " " + orderHeader.LastName,
+                    CardNumber = orderHeader.CardNumber,
+                    Cvv = orderHeader.CVV,
+                    ExpiryMonthYear = orderHeader.ExpiryMonthYear,
+                    OrderId = orderHeader.OrderHeaderId,
+                    OrderTotal = orderHeader.OrderTotl
+                };
+                try
+                {
+                    string queueName = "OrderPaymentProcessTopic";
+                    _messageBus.PublishMessage(paymentRequestMessage, queueName);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
                 _channel.BasicAck(e.DeliveryTag, false);
+
+                
                // Console.WriteLine("ReaD!!!!!!!!!!!!!!");
             };
             _channel.BasicConsume(queueName, false, consumer);
