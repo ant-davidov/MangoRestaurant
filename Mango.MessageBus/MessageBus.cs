@@ -30,5 +30,19 @@ namespace Mango.MessageBus
                 
 
         }
+        public void PublishMessageByExchange(BaseMessage message, string exchangeName)
+        {
+            var factory = new ConnectionFactory() { HostName = "localhost" };
+            using var connection = factory.CreateConnection();
+            message.Id = Guid.NewGuid().ToString();
+            using (var channel = connection.CreateModel())
+            {       
+                var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
+                channel.BasicPublish(exchange: exchangeName, routingKey: "", basicProperties: null, body: body);
+            };
+
+
+
+        }
     }
 }

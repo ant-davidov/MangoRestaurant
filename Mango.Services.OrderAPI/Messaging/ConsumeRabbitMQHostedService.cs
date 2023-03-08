@@ -100,7 +100,8 @@ namespace Mango.Services.OrderAPI.Messaging
                     Cvv = orderHeader.CVV,
                     ExpiryMonthYear = orderHeader.ExpiryMonthYear,
                     OrderId = orderHeader.OrderHeaderId,
-                    OrderTotal = orderHeader.OrderTotl
+                    OrderTotal = orderHeader.OrderTotl,
+                    Email = orderHeader.Email,
                 };
                 try
                 {

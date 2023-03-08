@@ -9,6 +9,7 @@ namespace Mango.MessageBus
     public interface IMessageBus
     {
         void PublishMessage(BaseMessage message, string queueName);
+        void PublishMessageByExchange(BaseMessage message, string exchangeName);
     }
 
 }

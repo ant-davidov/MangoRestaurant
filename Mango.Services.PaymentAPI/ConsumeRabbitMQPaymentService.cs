@@ -33,13 +33,11 @@ namespace Mango.Services.PaymentAPI
 
             // create channel  
             _channel = _connection.CreateModel();
-
             _channel.QueueDeclare(queue: queueNameForRead,
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
-   
+                                    durable: false,
+                                    exclusive: false,
+                                    autoDelete: false,
+                                    arguments: null);
         }
         public override void Dispose()
         {
@@ -62,14 +60,16 @@ namespace Mango.Services.PaymentAPI
                 UpdatepaymentResultMessage updatepaymentResultMessage = new()
                 {
                     Status = result,
-                    OrderId = paymentRequestMessage.OrderId
+                    OrderId = paymentRequestMessage.OrderId,
+                    Email = paymentRequestMessage.Email
+
                 };
 
                 _channel.BasicAck(e.DeliveryTag, false);
                 try
                 {
-                    string queueNamePush = "OrderPaymentResult";
-                    _messageBus.PublishMessage(updatepaymentResultMessage, queueNamePush);
+                    string exchangeName = "MangoPaymentProc";
+                    _messageBus.PublishMessageByExchange(updatepaymentResultMessage, exchangeName);
                 }
                 catch (Exception ex)
                 {

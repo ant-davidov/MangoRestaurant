@@ -1,24 +1,24 @@
 ﻿using Mango.MessageBus;
-using Mango.Services.OrderAPI.Repository;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client;
 using System.Text;
-using Mango.Services.OrderAPI.Messages;
 using Newtonsoft.Json;
+using Mango.Services.Email.Messages;
+using Mango.Services.Email.Repository;
 
-namespace Mango.Services.OrderAPI.Messaging
+namespace Mango.Services.Email.Messaging
 {
-    public class ConsumeRabbitMGetResultPaymentStatus : BackgroundService
+    public class GetResultPaymentStatusForEmail : BackgroundService
     {
-        const string queueName = "OrderPaymentResult";
+        const string queueName = "OrderPaymentResultForSendEmail";
         private IConnection _connection;
         private IModel _channel;
-        private readonly OrderRepository _orderRepository;
+        private readonly EmailRepository _emailRepository;
         private readonly IMessageBus _messageBus;
-        public ConsumeRabbitMGetResultPaymentStatus(OrderRepository orderRepository, IMessageBus messageBus)
+        public GetResultPaymentStatusForEmail(EmailRepository emailRepository, IMessageBus messageBus)
         {
             InitRabbitMQ();
-            _orderRepository = orderRepository;
+            _emailRepository = emailRepository;
             _messageBus = messageBus;
         }
         private void InitRabbitMQ()
@@ -32,7 +32,11 @@ namespace Mango.Services.OrderAPI.Messaging
             // create channel  
             _channel = _connection.CreateModel();
 
-            
+            //_channel.QueueDeclare(queue: queueName,
+            //                         durable: false,
+            //                         exclusive: false,
+            //                         autoDelete: false,
+            //                         arguments: null);
 
         }
         public override void Dispose()
@@ -51,8 +55,7 @@ namespace Mango.Services.OrderAPI.Messaging
                 var body = e.Body;
                 var message = Encoding.UTF8.GetString(body.ToArray());
                 var paymentResultMessage = JsonConvert.DeserializeObject<UpdatepaymentResultMessage>(message);
-                await _orderRepository.UpdateOrderPaymentStatus(paymentResultMessage.OrderId,paymentResultMessage.Status);
-
+                await _emailRepository.SendAndLogEmail(paymentResultMessage);
                 _channel.BasicAck(e.DeliveryTag, false);
 
 
